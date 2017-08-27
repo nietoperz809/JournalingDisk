@@ -30,16 +30,16 @@ public class Tester
         cc = disk.read(0);
         System.out.println(Arrays.toString(cc));
 
-        disk.rollback();
+        disk.rollback(3);
         cc = disk.read(0);
         System.out.println(Arrays.toString(cc));
 
-        disk.rollback();
-        cc = disk.read(0);
-        System.out.println(Arrays.toString(cc));
-
-        disk.rollback();
-        cc = disk.read(0);
-        System.out.println(Arrays.toString(cc));
+//        disk.rollback();
+//        cc = disk.read(0);
+//        System.out.println(Arrays.toString(cc));
+//
+//        disk.rollback();
+//        cc = disk.read(0);
+//        System.out.println(Arrays.toString(cc));
     }
 }

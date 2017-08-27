@@ -3,8 +3,24 @@ import java.util.Set;
 
 public class JournalingDisk extends RawDisk
 {
-    private HashMap<Integer,Sector> changeMap;
-    private HashMap<Long, HashMap<Integer,Sector>> mainMap = new HashMap<>();
+    class SectorMap extends HashMap<Integer,Sector>
+    {
+        private long time;
+
+        public SectorMap()
+        {
+            super();
+            time = System.currentTimeMillis();
+        }
+    }
+
+    class TransactionMap extends HashMap<Long, SectorMap>
+    {
+
+    }
+
+    private SectorMap sectorMap;
+    private TransactionMap mainMap = new TransactionMap();
     private long transactionId = 0;
 
     public JournalingDisk (int numsectors)
@@ -19,19 +35,20 @@ public class JournalingDisk extends RawDisk
 
     public long beginTransaction()
     {
-        changeMap = new HashMap<>();
+        sectorMap = new SectorMap();
         transactionId++;
         return transactionId;
     }
 
     public void endTransaction()
     {
-        mainMap.put(transactionId, changeMap);
+        mainMap.put(transactionId, sectorMap);
     }
 
     public void rollbackTo (long tr)
     {
-        HashMap<Integer,Sector> list = mainMap.get(tr);
+        SectorMap list = mainMap.get(tr);
+        //System.out.println(list.time);
         if (list != null)
         {
             Set<Integer> set = list.keySet();
@@ -63,7 +80,7 @@ public class JournalingDisk extends RawDisk
     {
         byte[] old = super.read(num);
         Sector ext = new Sector (minus (old, data));
-        changeMap.put(num, ext);
+        sectorMap.put(num, ext);
         super.write(num, data);
     }
 

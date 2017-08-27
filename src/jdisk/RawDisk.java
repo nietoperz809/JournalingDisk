@@ -1,3 +1,4 @@
+package jdisk;
 
 public class RawDisk
 {
@@ -18,6 +19,11 @@ public class RawDisk
     public byte[] read(int num)
     {
         return sectors[num].read();
+    }
+
+    public byte[] getInternalBuffer(int num)
+    {
+        return sectors[num].getInternalBuffer();
     }
 
     public void write (int num, byte[] data)

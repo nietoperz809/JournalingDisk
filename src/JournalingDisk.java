@@ -3,7 +3,7 @@ import java.util.Set;
 
 public class JournalingDisk extends RawDisk
 {
-    private HashMap<Integer,Sector> changeMap = new HashMap<>();
+    private HashMap<Integer,Sector> changeMap;
     private HashMap<Long, HashMap<Integer,Sector>> mainMap = new HashMap<>();
     private long transactionId = 0;
 
@@ -19,14 +19,14 @@ public class JournalingDisk extends RawDisk
 
     public long beginTransaction()
     {
+        changeMap = new HashMap<>();
         transactionId++;
         return transactionId;
     }
 
     public void endTransaction()
     {
-        mainMap.put(transactionId, (HashMap<Integer,Sector>) changeMap.clone());
-        changeMap.clear();
+        mainMap.put(transactionId, changeMap);
     }
 
     public void rollbackTo (long tr)
@@ -46,6 +46,13 @@ public class JournalingDisk extends RawDisk
             mainMap.remove(tr);
         }
     }
+
+    public void rollback()
+    {
+        rollbackTo(transactionId);
+        transactionId--;
+    }
+
 
     public byte[] read(int num)
     {

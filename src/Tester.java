@@ -30,15 +30,15 @@ public class Tester
         cc = disk.read(0);
         System.out.println(Arrays.toString(cc));
 
-        disk.rollbackTo(trans3);
+        disk.rollback();
         cc = disk.read(0);
         System.out.println(Arrays.toString(cc));
 
-        disk.rollbackTo(trans2);
+        disk.rollback();
         cc = disk.read(0);
         System.out.println(Arrays.toString(cc));
 
-        disk.rollbackTo(trans1);
+        disk.rollback();
         cc = disk.read(0);
         System.out.println(Arrays.toString(cc));
     }

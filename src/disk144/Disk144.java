@@ -1,10 +1,12 @@
 package disk144;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import jdisk.RawDisk;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
-import static disk144.Constants.winNtBootSector;
+import static disk144.Constants.*;
 
 public class Disk144 extends RawDisk
 {
@@ -29,14 +31,15 @@ public class Disk144 extends RawDisk
 
     /**
      * set Vol label of this disk
-     * @param label
-     * @throws Exception
+     * @param label the label
+     * @throws Exception if smth. failed
      */
     private void setVolumeLabel (String label) throws Exception
     {
-        label = label.toUpperCase();
-        while (label.length()<11)
-            label = label+' ';
+        StringBuilder labelBuilder = new StringBuilder(label.toUpperCase());
+        while (labelBuilder.length()<11)
+            labelBuilder.append(' ');
+        label = labelBuilder.toString();
         if (label.length() > 11)
             label = label.substring (0, 11);
         writeBytes (0x2b, label.getBytes());   // write label in boot block
@@ -59,9 +62,64 @@ public class Disk144 extends RawDisk
         return b;
     }
 
+    /**
+     * Put a new File on disk
+     * @param filename File name
+     * @param ext Extension
+     * @param data File Data
+     * @throws Exception
+     */
+    public void putFile (String filename, String ext, byte[] data) throws Exception
+    {
+        Fat12 fat = new Fat12(this);
+        Directory directory = new Directory(this);
+        int freedir = directory.getFreeDirectoryEntryOffset();
+
+        SplitHelper sh = new SplitHelper(data.length, CLUSTERSIZE);
+        ArrayList<Integer> freeList = fat.getFreeEntryList(sh.getTotalblocks());
+
+        ByteOutputStream splits[] = SplitHelper.split(data, CLUSTERSIZE);
+
+        DirectoryEntry de = DirectoryEntry.create(filename,
+                ext,
+                data.length,
+                freeList.get(0),
+                ARCHIVE);
+
+        directory.put (de, freedir);
+
+        for (int i=0; i<sh.getTotalblocks(); i++)
+        {
+            int sector = freeList.get(i);
+            int nextsector;
+            if (i == (sh.getTotalblocks()-1))
+            {
+                nextsector = LAST_SLOT;
+            }
+            else
+            {
+                nextsector = freeList.get(i + 1);
+            }
+            writeSectors(sector+ DATAOFFSET, splits[i].getBytes());
+
+            fat.setFatEntryValue (sector, nextsector);
+        }
+
+        directory.close ();
+        fat.close();
+    }
+
     public static void main (String[] args) throws Exception
     {
         Disk144 disk = new Disk144("halloweltdubistcool");
+
+        byte[] buff = new byte[1000];
+        for (int s=0; s<buff.length; s++)
+        {
+            buff[s] = (byte)(s%26 + 'a');
+        }
+        disk.putFile("hallo", "txt", buff);
+
         disk.toFile("c:/disk2-144.img");
     }
 }

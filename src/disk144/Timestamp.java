@@ -14,7 +14,7 @@ public class Timestamp
      * @param hour hours 0...23
      * @return Packed time stamp
      */
-    public static int getTimeStamp (int sec, int min, int hour)
+    private static int getTimeStamp (int sec, int min, int hour)
     {
         int a = (sec/2) & 31;
         int b = (min & 63) << 5;
@@ -42,7 +42,7 @@ public class Timestamp
      * @param year year 1980...2107
      * @return Packed date stamp
      */
-    public static int getDateStamp (int day, int month, int year)
+    private static int getDateStamp (int day, int month, int year)
     {
         int a = (day) & 31;
         int b = (month & 15) << 5;

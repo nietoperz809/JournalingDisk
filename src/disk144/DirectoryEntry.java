@@ -36,10 +36,12 @@ public class DirectoryEntry
      */
     public static DirectoryEntry createVolumeLabel (String lab)
     {
-        while (lab.length() < 11)
+        StringBuilder labBuilder = new StringBuilder(lab);
+        while (labBuilder.length() < 11)
         {
-            lab = lab + ' ';
+            labBuilder.append(' ');
         }
+        lab = labBuilder.toString();
         return create(lab.substring(0, 8), lab.substring(8, 11),
                 0, 0, (byte) VOLUMELABEL);
     }
@@ -53,10 +55,10 @@ public class DirectoryEntry
      * @param firstCluster First cluster on disk
      * @return Newly created Dir Entry
      */
-    public static DirectoryEntry create (String name, String ext,
-                                         long fileSize,
-                                         int firstCluster,
-                                         int attributes)
+    static DirectoryEntry create (String name, String ext,
+                                          long fileSize,
+                                          int firstCluster,
+                                          int attributes)
     {
         int ts = Timestamp.getCurrentTimeStamp();
         int ds = Timestamp.getCurrentDateStamp();
@@ -165,12 +167,12 @@ public class DirectoryEntry
         return fs;
     }
 
-    public void setFileSize (long val)
+    private void setFileSize (long val)
     {
         ByteCVT.toLE32(val, RawData, 28);
     }
 
-    public byte getAttributes ()
+    private byte getAttributes ()
     {
         return RawData[11];
     }
@@ -185,12 +187,12 @@ public class DirectoryEntry
         return ByteCVT.fromLE16(RawData, 26);
     }
 
-    public String getExtension ()
+    private String getExtension ()
     {
         return new String(RawData, 8, 3).toUpperCase().trim();
     }
 
-    public String getFileName ()
+    private String getFileName ()
     {
         if (isDeleted())
         {
@@ -202,7 +204,7 @@ public class DirectoryEntry
         }
     }
 
-    public void setFileName (String name)
+    private void setFileName (String name)
     {
         for (int s = 0; s < 8; s++)
         {
@@ -217,7 +219,7 @@ public class DirectoryEntry
         }
     }
 
-    public void setExtension (String ext)
+    private void setExtension (String ext)
     {
         for (int s = 0; s < 3; s++)
         {
@@ -232,12 +234,12 @@ public class DirectoryEntry
         }
     }
 
-    public void setFirstCluster (int val)
+    private void setFirstCluster (int val)
     {
         ByteCVT.toLE16(val, RawData, 26);
     }
 
-    public void setAttributes (byte v)
+    private void setAttributes (byte v)
     {
         RawData[11] = v;
     }

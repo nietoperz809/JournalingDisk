@@ -21,6 +21,13 @@ public class Constants
     public final static int DIRSTARTSECTOR = 19;
     public final static int NUMDIRSECTORS = 14;
 
+    public static final int MAXENTRY_1440KB = 2880;
+    public static final int CLUSTERSIZE = 512;
+    public static final int SECTORSIZE = 512;
+    public static final int DATAOFFSET = 31;
+    public static final int FREE_SLOT = 0;
+    public static final int LAST_SLOT = 0x0fff;
+
     public static final byte[] winNtBootSector =
             {
                     (byte) 0xeb, (byte) 0x3c, (byte) 0x90, (byte) 0x4d, (byte) 0x53, (byte) 0x44, (byte) 0x4f, (byte) 0x53, (byte) 0x35,

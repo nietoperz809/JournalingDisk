@@ -12,14 +12,14 @@ final class Directory
      */
     private final byte[] directoryBytes;
 
-    Disk144 disk;
+    private final Disk144 disk;
 
     /**
      * Constructor
      * @param fmf FMF containing disk file
      * @throws Exception
      */
-    public Directory (Disk144 fmf) throws Exception
+    public Directory (Disk144 fmf)
     {
         disk = fmf;
         directoryBytes = disk.readSectors (DIRSTARTSECTOR, NUMDIRSECTORS);
@@ -29,7 +29,7 @@ final class Directory
      * Writes dir bytes back to Disk FMF
      * @throws Exception
      */
-    public void close () throws Exception
+    public void close ()
     {
         disk.writeSectors (DIRSTARTSECTOR, directoryBytes);
     }

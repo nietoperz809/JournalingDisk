@@ -1,9 +1,6 @@
 package jdisk;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class RawDisk
 {
@@ -143,6 +140,18 @@ public class RawDisk
             bs.write (sectors[s].getInternalBuffer());
         }
         bs.close();
+    }
+
+    public void fromFile (String name) throws IOException
+    {
+        FileInputStream fs = new FileInputStream(new File(name));
+        for (Sector sector : sectors)
+        {
+            byte[] dest = sector.getInternalBuffer();
+            if (fs.read(dest) == -1)
+                break;
+        }
+        fs.close();
     }
 
 }

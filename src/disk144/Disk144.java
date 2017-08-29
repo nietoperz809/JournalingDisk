@@ -3,6 +3,7 @@ package disk144;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import jdisk.RawDisk;
 
+import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
@@ -109,17 +110,47 @@ public class Disk144 extends RawDisk
         fat.close();
     }
 
+    public void deleteFile (String filename) throws Exception
+    {
+        Fat12 fat = new Fat12(this);
+        Directory directory = new Directory(this);
+        DirectoryEntry de = directory.seekFile(filename);
+        de.setDeleted();
+        directory.put(de, de.positionInDirectory);
+        fat.deleteFile(de);
+
+        fat.close();
+        directory.close();
+    }
+
+    /**
+     * Read a file on Disk
+     * @param filename Name of file (Format: name.ext)
+     * @return a DynArray containing the file data
+     * @throws Exception if smth gone wrong or file doesn't exist
+     */
+    public ByteArrayOutputStream getFileData (String filename) throws Exception
+    {
+        Fat12 fat = new Fat12(this);
+        Directory d = new Directory(this);
+        DirectoryEntry de = d.seekFile(filename);
+        return fat.getFile(de);
+    }
+
     public static void main (String[] args) throws Exception
     {
         Disk144 disk = new Disk144("halloweltdubistcool");
+        disk.fromFile("c:/disk2-144.img");
+        ByteArrayOutputStream ba = disk.getFileData("hallo.txt");
+        System.out.println(ba);
 
-        byte[] buff = new byte[1000];
-        for (int s=0; s<buff.length; s++)
-        {
-            buff[s] = (byte)(s%26 + 'a');
-        }
-        disk.putFile("hallo", "txt", buff);
-
-        disk.toFile("c:/disk2-144.img");
+//        byte[] buff = new byte[1000];
+//        for (int s=0; s<buff.length; s++)
+//        {
+//            buff[s] = (byte)(s%26 + 'a');
+//        }
+//        disk.putFile("hallo", "txt", buff);
+//
+//        disk.toFile("c:/disk2-144.img");
     }
 }

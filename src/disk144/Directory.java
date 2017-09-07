@@ -17,7 +17,6 @@ final class Directory
     /**
      * Constructor
      * @param fmf FMF containing disk file
-     * @throws Exception
      */
     public Directory (Disk144 fmf)
     {
@@ -27,7 +26,6 @@ final class Directory
 
     /**
      * Writes dir bytes back to Disk FMF
-     * @throws Exception
      */
     public void close ()
     {
@@ -89,9 +87,9 @@ final class Directory
      * Finds first free Dir index
      * @return Found index or none (in this case an Exception is thrown)
      */
-    public int getFreeDirectoryEntryOffset ()
+    public int getFreeDirectoryEntryOffset (int start)
     {
-        for (int s = 0; s< DIRENTRYCOUNT; s++)
+        for (int s = start; s< DIRENTRYCOUNT; s++)
         {
             DirectoryEntry de = new DirectoryEntry(directoryBytes, s * DIRENTRYSIZE);
             if (de.isNull() || de.isDeleted())
@@ -99,4 +97,15 @@ final class Directory
         }
         throw new RuntimeException("directory full");
     }
+
+    public int getFreeDirectoryEntryOffset ()
+    {
+        return getFreeDirectoryEntryOffset(0);
+    }
+
+//    public int getNextFreeDirectoryEntryOffset ()
+//    {
+//        int i = getFreeDirectoryEntryOffset(0);
+//        return getFreeDirectoryEntryOffset(i+1);
+//    }
 }

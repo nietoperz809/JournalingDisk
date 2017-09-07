@@ -11,6 +11,8 @@ import static disk144.Constants.*;
 
 public class Disk144 extends RawDisk
 {
+    private static final byte[] fatInitBytes = {(byte) 0xf0, (byte) 0xff, (byte) 0xff};
+    
     /**
      * Constructor
      * @param name volume name
@@ -23,7 +25,6 @@ public class Disk144 extends RawDisk
 
         // Formatting ...
         writeBytes(0x27, getFourRandomBytes());
-        final byte[] fatInitBytes = {(byte) 0xf0, (byte) 0xff, (byte) 0xff};
         writeBytes(0x200, fatInitBytes);
         writeBytes(0x1400, fatInitBytes);
         fillArea((byte)0xf6, 0x4200, 1457664);
@@ -137,12 +138,31 @@ public class Disk144 extends RawDisk
         return fat.getFile(de);
     }
 
+    public void createSubDir (String name, String ext) throws Exception
+    {
+        Fat12 fat = new Fat12(this);
+        ArrayList<Integer> freeList = fat.getFreeEntryList(1); // only one sector
+        Directory directory = new Directory(this);
+        int freedir = directory.getFreeDirectoryEntryOffset();
+        DirectoryEntry de = DirectoryEntry.createSubdirEntry(name, ext, freedir+1); // TODO: why+1?
+        fat.setFatEntryValue (freeList.get(0), LAST_SLOT); // only one sector
+        directory.put (de, freedir);
+
+        directory.close ();
+        fat.close();
+    }
+
     public static void main (String[] args) throws Exception
     {
+        String dfile = "c:/testdisk.img";
         Disk144 disk = new Disk144("halloweltdubistcool");
-        disk.fromFile("c:/disk2-144.img");
-        ByteArrayOutputStream ba = disk.getFileData("hallo.txt");
-        System.out.println(ba);
+        //disk.fromFile();
+
+        disk.createSubDir("nana", "");
+       // disk.toFile("c:/disk2-144.img");
+
+//        ByteArrayOutputStream ba = disk.getFileData("fuck.txt");
+//        System.out.println(ba);
 
 //        byte[] buff = new byte[1000];
 //        for (int s=0; s<buff.length; s++)
@@ -150,7 +170,7 @@ public class Disk144 extends RawDisk
 //            buff[s] = (byte)(s%26 + 'a');
 //        }
 //        disk.putFile("hallo", "txt", buff);
-//
-//        disk.toFile("c:/disk2-144.img");
+
+        disk.toFile(dfile);
     }
 }

@@ -24,7 +24,7 @@ public class DirectoryEntry
      */
     public DirectoryEntry (byte[] array, int offset)
     {
-        RawData = new byte[DIRENTRYSIZE];
+        this();
         System.arraycopy(array, offset, RawData, 0, DIRENTRYSIZE);
     }
 
@@ -76,9 +76,9 @@ public class DirectoryEntry
         return d;
     }
 
-    public static DirectoryEntry createSubdirEntry (String name, String ext, int cluster)
+    public static DirectoryEntry createSubdirEntry (String name, String ext, int firstCluster)
     {
-        return create(name, ext, 0, cluster, (byte) SUBDIRECTORY);
+        return create(name, ext, 0, firstCluster, (byte) SUBDIRECTORY); /* Test +1*/
     }
 
     /**

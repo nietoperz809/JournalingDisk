@@ -2,6 +2,9 @@ package disk144;
 
 public class Constants
 {
+    public static final int FAT1_STARTSECTOR = 1;
+    public static final int FAT2_STARTSECTOR = 10;
+    public static final int FAT_NUMSECTORS = 9;
     /**
      * Attributes
      */

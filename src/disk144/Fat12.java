@@ -10,35 +10,36 @@ import static disk144.Constants.*;
  */
 final class Fat12
 {
-    private final byte[] _fat;
-    private final Disk144 _fmf;
-    private final Fat12Entry _fatEntry;
+    private final byte[] theFAT;
+    private final Disk144 disk;
+    private final Fat12Entry fatEntry;
 
-    public Fat12 (Disk144 fmf) throws Exception
+    public Fat12 (Disk144 disk144) throws Exception
     {
-        _fmf = fmf;
-        _fat = fmf.readSectors(1, 9);
-        _fatEntry = new Fat12Entry(this);
+        disk = disk144;
+        theFAT = disk144.readSectors(FAT1_STARTSECTOR, FAT_NUMSECTORS);
+        fatEntry = new Fat12Entry(theFAT);
     }
 
-    public byte[] getArray()
+    public byte[] getFatArray ()
     {
-        return _fat;
+        return theFAT;
     }
 
     int getFatEntryValue (int idx)
     {
-        return _fatEntry.getFatEntryValue(idx);
+        return fatEntry.getFatEntryValue(idx);
     }
 
     void setFatEntryValue (int idx, int v)
     {
-        _fatEntry.setFatEntryValue(idx, v);
+        fatEntry.setFatEntryValue(idx, v);
     }
 
     public void close () throws Exception
     {
-        _fmf.writeSectors(1, _fat);
+        disk.writeSectors(FAT1_STARTSECTOR, theFAT);
+        disk.writeSectors(FAT2_STARTSECTOR, theFAT); // create 2nd FAT
     }
 
     public ArrayList<Integer> getFreeEntryList (int needed)
@@ -71,13 +72,13 @@ final class Fat12
         byte[] bytes;
         for (int s=0; s<blocks; s++)
         {
-            bytes = _fmf.read(cluster+ DATAOFFSET);
+            bytes = disk.read(cluster+ DATAOFFSET);
             out.write(bytes);
             cluster = getFatEntryValue(cluster);
         }
         if (remainder != 0)
         {
-            bytes = _fmf.read(cluster+ DATAOFFSET);
+            bytes = disk.read(cluster+ DATAOFFSET);
             out.write(bytes,0,remainder);
         }
         return out;

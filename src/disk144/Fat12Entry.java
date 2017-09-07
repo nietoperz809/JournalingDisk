@@ -12,13 +12,12 @@ package disk144;
  */
 public final class Fat12Entry
 {
-
     private byte[] fat;
 
-    public Fat12Entry (Fat12 f)
-    {
-        this.fat = f.getArray();
-    }
+//    public Fat12Entry (Fat12 f)
+//    {
+//        this.fat = f.getFatArray();
+//    }
 
     public Fat12Entry (byte[] f)
     {

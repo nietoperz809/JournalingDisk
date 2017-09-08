@@ -10,7 +10,7 @@ import java.math.BigInteger;
  *
  * @author Administrator
  */
-public class ByteCVT
+class ByteCVT
 {
     private static final BigInteger bi256 = BigInteger.valueOf(256);
 

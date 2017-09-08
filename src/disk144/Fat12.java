@@ -14,7 +14,7 @@ final class Fat12
     private final Disk144 disk;
     private final Fat12Entry fatEntry;
 
-    public Fat12 (Disk144 disk144) throws Exception
+    public Fat12 (Disk144 disk144)
     {
         disk = disk144;
         theFAT = disk144.readSectors(FAT1_STARTSECTOR, FAT_NUMSECTORS);
@@ -26,7 +26,7 @@ final class Fat12
         return theFAT;
     }
 
-    int getFatEntryValue (int idx)
+    private int getFatEntryValue (int idx)
     {
         return fatEntry.getFatEntryValue(idx);
     }
@@ -36,7 +36,7 @@ final class Fat12
         fatEntry.setFatEntryValue(idx, v);
     }
 
-    public void close () throws Exception
+    public void close ()
     {
         disk.writeSectors(FAT1_STARTSECTOR, theFAT);
         disk.writeSectors(FAT2_STARTSECTOR, theFAT); // create 2nd FAT
@@ -45,7 +45,7 @@ final class Fat12
     public ArrayList<Integer> getFreeEntryList (int needed)
     {
         ArrayList<Integer> list = new ArrayList<>();
-        for (int s = 2; s<= MAXENTRY_1440KB; s++)
+        for (int s = 2; s<= MAXENTRY_1440KB; s++) // Start with 2
         {
             if (getFatEntryValue(s) == FREE_SLOT)
                 list.add(s);
@@ -84,7 +84,7 @@ final class Fat12
         return out;
     }
 
-    public void deleteFile (DirectoryEntry de) throws Exception
+    public void deleteFile (DirectoryEntry de)
     {
         SplitHelper sh = new SplitHelper(de.getFileSize(), CLUSTERSIZE);
         int cluster = de.getFirstCluster();

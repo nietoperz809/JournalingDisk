@@ -10,9 +10,9 @@ package disk144;
  * xyz is the one pointer entry and
  * XYZ is the second pointer entry.
  */
-public final class Fat12Entry
+final class Fat12Entry
 {
-    private byte[] fat;
+    private final byte[] fat;
 
 //    public Fat12Entry (Fat12 f)
 //    {

@@ -1,6 +1,6 @@
 package disk144;
 
-public class Constants
+class Constants
 {
     public static final int FAT1_STARTSECTOR = 1;
     public static final int FAT2_STARTSECTOR = 10;
@@ -27,7 +27,7 @@ public class Constants
     public static final int MAXENTRY_1440KB = 2880;
     public static final int CLUSTERSIZE = 512;
     public static final int SECTORSIZE = 512;
-    public static final int DATAOFFSET = 31;
+    public static final int DATAOFFSET = 31;  // First sector number
     public static final int FREE_SLOT = 0;
     public static final int LAST_SLOT = 0x0fff;
 

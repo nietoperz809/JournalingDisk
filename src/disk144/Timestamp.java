@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * Time stamp API
  */
-public class Timestamp
+class Timestamp
 {
     /**
      * Make FAT time stamp

@@ -4,8 +4,8 @@ import java.io.*;
 
 public class RawDisk
 {
-    private Sector[] sectors;
-    private int sectorSize;
+    private final Sector[] sectors;
+    private final int sectorSize;
 
     /**
      * Constructor
@@ -24,7 +24,7 @@ public class RawDisk
      * Constructor with sectorsize=512
      * @param numsectors
      */
-    public RawDisk (int numsectors)
+    RawDisk (int numsectors)
     {
         this(numsectors, 512);
     }
@@ -32,7 +32,7 @@ public class RawDisk
     /**
      * Constructor for 1.44MB disk
      */
-    public RawDisk ()
+    protected RawDisk ()
     {
         this(2880, 512);
     }
@@ -52,7 +52,7 @@ public class RawDisk
      * @param num logical sector number
      * @return
      */
-    public byte[] getInternalBuffer(int num)
+    byte[] getInternalBuffer (int num)
     {
         return sectors[num].getInternalBuffer();
     }
@@ -93,7 +93,7 @@ public class RawDisk
         return ret;
     }
 
-    public void writeByte (int address, byte b)
+    private void writeByte (int address, byte b)
     {
         int sect = address/sectorSize;
         int off = address%sectorSize;
@@ -101,7 +101,7 @@ public class RawDisk
         buff[off] = b;
     }
 
-    public void fillArea (byte b, int address, int length)
+    protected void fillArea (byte b, int address, int length)
     {
         for (int s=0; s<length; s++)
         {
@@ -109,7 +109,7 @@ public class RawDisk
         }
     }
 
-    public byte readByte (int address)
+    private byte readByte (int address)
     {
         int sect = address/sectorSize;
         int off = address%sectorSize;
@@ -135,9 +135,9 @@ public class RawDisk
     {
         FileOutputStream fs = new FileOutputStream(new File(name));
         BufferedOutputStream bs = new BufferedOutputStream(fs);
-        for (int s = 0; s<sectors.length; s++)
+        for (Sector sector : sectors)
         {
-            bs.write (sectors[s].getInternalBuffer());
+            bs.write(sector.getInternalBuffer());
         }
         bs.close();
     }

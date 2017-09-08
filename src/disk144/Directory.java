@@ -87,9 +87,9 @@ final class Directory
      * Finds first free Dir index
      * @return Found index or none (in this case an Exception is thrown)
      */
-    public int getFreeDirectoryEntryOffset (int start)
+    public int getFreeDirectoryEntryOffset ()
     {
-        for (int s = start; s< DIRENTRYCOUNT; s++)
+        for (int s = 0; s< DIRENTRYCOUNT; s++)
         {
             DirectoryEntry de = new DirectoryEntry(directoryBytes, s * DIRENTRYSIZE);
             if (de.isNull() || de.isDeleted())
@@ -97,15 +97,4 @@ final class Directory
         }
         throw new RuntimeException("directory full");
     }
-
-    public int getFreeDirectoryEntryOffset ()
-    {
-        return getFreeDirectoryEntryOffset(0);
-    }
-
-//    public int getNextFreeDirectoryEntryOffset ()
-//    {
-//        int i = getFreeDirectoryEntryOffset(0);
-//        return getFreeDirectoryEntryOffset(i+1);
-//    }
 }

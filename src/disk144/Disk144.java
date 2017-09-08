@@ -18,7 +18,7 @@ public class Disk144 extends RawDisk
      * @param name volume name
      * @throws Exception if smth. gone wrong
      */
-    public Disk144 (String name) throws Exception
+    private Disk144 (String name)
     {
         super();
         write (0, winNtBootSector);
@@ -36,7 +36,7 @@ public class Disk144 extends RawDisk
      * @param label the label
      * @throws Exception if smth. failed
      */
-    private void setVolumeLabel (String label) throws Exception
+    private void setVolumeLabel (String label)
     {
         StringBuilder labelBuilder = new StringBuilder(label.toUpperCase());
         while (labelBuilder.length()<11)
@@ -71,7 +71,7 @@ public class Disk144 extends RawDisk
      * @param data File Data
      * @throws Exception
      */
-    public void putFile (String filename, String ext, byte[] data) throws Exception
+    public void putFile (String filename, String ext, byte[] data)
     {
         Fat12 fat = new Fat12(this);
         Directory directory = new Directory(this);
@@ -111,7 +111,7 @@ public class Disk144 extends RawDisk
         fat.close();
     }
 
-    public void deleteFile (String filename) throws Exception
+    public void deleteFile (String filename)
     {
         Fat12 fat = new Fat12(this);
         Directory directory = new Directory(this);
@@ -138,28 +138,43 @@ public class Disk144 extends RawDisk
         return fat.getFile(de);
     }
 
-    public void createSubDir (String name, String ext) throws Exception
+    private byte[] createSubDirStartSector (int cluster)
+    {
+        DirectoryEntry dot = DirectoryEntry.dotEntry(cluster);
+        DirectoryEntry dotdot = DirectoryEntry.dotDotEntry();
+        byte[] buff = new byte[CLUSTERSIZE];
+        System.arraycopy(dot.asArray(),0,buff,0,DIRENTRYSIZE);
+        System.arraycopy(dotdot.asArray(),0,buff,DIRENTRYSIZE,DIRENTRYSIZE);
+        return buff;
+    }
+
+    private void createSubDir (String name, String ext)
     {
         Fat12 fat = new Fat12(this);
         ArrayList<Integer> freeList = fat.getFreeEntryList(1); // only one sector
         Directory directory = new Directory(this);
         int freedir = directory.getFreeDirectoryEntryOffset();
-        DirectoryEntry de = DirectoryEntry.createSubdirEntry(name, ext, freedir+1); // TODO: why+1?
+        DirectoryEntry de = DirectoryEntry.createSubdirEntry(name, ext, freeList.get(0));
         fat.setFatEntryValue (freeList.get(0), LAST_SLOT); // only one sector
         directory.put (de, freedir);
+
+        // Dot/DotDot
+        byte[] buff = createSubDirStartSector(freeList.get(0));
+        this.writeSectors(DATAOFFSET + freeList.get(0), buff);
 
         directory.close ();
         fat.close();
     }
 
+
     public static void main (String[] args) throws Exception
     {
-        String dfile = "c:/testdisk.img";
+        String dfile = "c:/faked3.img";
         Disk144 disk = new Disk144("halloweltdubistcool");
-        //disk.fromFile();
-
         disk.createSubDir("nana", "");
-       // disk.toFile("c:/disk2-144.img");
+        disk.toFile(dfile);
+
+        // disk.toFile("c:/disk2-144.img");
 
 //        ByteArrayOutputStream ba = disk.getFileData("fuck.txt");
 //        System.out.println(ba);

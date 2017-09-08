@@ -5,27 +5,27 @@ import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 /**
  * Created by Administrator on 11/24/2016.
  */
-public class SplitHelper
+class SplitHelper
 {
-    public int getBlocks()
+    private int getBlocks ()
     {
         return blocks;
     }
-    private int blocks;
+    private final int blocks;
 
-    public int getRemainder ()
+    private int getRemainder ()
     {
         return remainder;
     }
 
-    private int remainder;
+    private final int remainder;
 
     public int getTotalblocks ()
     {
         return totalblocks;
     }
 
-    private int totalblocks;
+    private final int totalblocks;
 
     public SplitHelper (long length, int chunksize)
     {

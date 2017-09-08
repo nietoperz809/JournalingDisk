@@ -46,6 +46,18 @@ public class DirectoryEntry
                 0, 0, (byte) VOLUMELABEL);
     }
 
+    public static DirectoryEntry dotEntry(int firstCluster)
+    {
+        return create(".", "",
+                0, firstCluster, (byte) SUBDIRECTORY);
+    }
+
+    public static DirectoryEntry dotDotEntry()
+    {
+        return create("..", "",
+                0, 0, (byte) SUBDIRECTORY);
+    }
+
     /**
      * Build a Dir entry from input
      *
@@ -163,8 +175,7 @@ public class DirectoryEntry
 
     public long getFileSize ()
     {
-        long fs = ByteCVT.fromLE32(RawData, 28);
-        return fs;
+        return ByteCVT.fromLE32(RawData, 28);
     }
 
     private void setFileSize (long val)
